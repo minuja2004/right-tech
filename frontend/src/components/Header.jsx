@@ -46,11 +46,11 @@ export default function Header({ onSearchChange, searchQuery }) {
             src="/logo.png" 
             alt="Right Technology Holdings Logo" 
             style={{ 
-              height: '65px', 
+              height: '82px', 
               objectFit: 'contain',
-              maxWidth: '320px',
-              /* filter brightness to make navy/dark text in logo readable on dark backgrounds */
-              filter: 'brightness(1.1) contrast(1.05)'
+              maxWidth: '350px',
+              /* Invert colors to make dark text white, while hue-rotating 180deg to preserve the blue brand color */
+              filter: 'invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)'
             }} 
           />
         </Link>

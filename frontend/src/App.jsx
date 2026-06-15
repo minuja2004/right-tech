@@ -68,7 +68,8 @@ export default function App() {
                       height: '35px', 
                       objectFit: 'contain',
                       alignSelf: 'flex-start',
-                      marginBottom: '0.25rem'
+                      marginBottom: '0.25rem',
+                      filter: 'invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)'
                     }} 
                   />
                   <p style={{ lineHeight: '1.6' }}>
