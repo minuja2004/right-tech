@@ -1,0 +1,14 @@
+{
+  "name": "right-tech",
+  "version": "1.0.0",
+  "description": "Premium E-Commerce Supplement Store",
+  "scripts": {
+    "install-all": "npm.cmd install && cd backend && npm.cmd install && cd ../frontend && npm.cmd install --legacy-peer-deps",
+    "backend": "cd backend && node server.js",
+    "frontend": "cd frontend && npm.cmd run dev",
+    "dev": "concurrently \"npm.cmd run backend\" \"npm.cmd run frontend\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
