@@ -28,7 +28,7 @@ export default function Header({ onSearchChange, searchQuery }) {
   };
 
   return (
-    <header style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', width: '100%' }}>
+    <header style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', width: '100%' }}>
       
       {/* FIRST ROW: Logo, Search Bar, Info Badges */}
       <div className="container" style={{ 
@@ -48,7 +48,9 @@ export default function Header({ onSearchChange, searchQuery }) {
             style={{ 
               height: '65px', 
               objectFit: 'contain',
-              maxWidth: '320px'
+              maxWidth: '320px',
+              /* filter brightness to make navy/dark text in logo readable on dark backgrounds */
+              filter: 'brightness(1.1) contrast(1.05)'
             }} 
           />
         </Link>
@@ -68,22 +70,22 @@ export default function Header({ onSearchChange, searchQuery }) {
             onChange={handleSearchChangeInternal}
             style={{
               width: '100%',
-              backgroundColor: '#f1f5f9',
-              border: '1px solid #cbd5e1',
-              color: '#0f172a',
+              backgroundColor: '#1c1c1f',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-primary)',
               padding: '0.65rem 3.5rem 0.65rem 1.25rem',
               borderRadius: '50px',
               fontSize: '0.85rem',
               outline: 'none',
-              transition: 'border-color var(--transition-fast)'
+              transition: 'border-color var(--transition-fast), background-color var(--transition-fast)'
             }}
             onFocus={(e) => {
               e.target.style.borderColor = 'var(--accent)';
-              e.target.style.backgroundColor = '#ffffff';
+              e.target.style.backgroundColor = '#0a0a0a';
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = '#cbd5e1';
-              e.target.style.backgroundColor = '#f1f5f9';
+              e.target.style.borderColor = 'var(--border-color)';
+              e.target.style.backgroundColor = '#1c1c1f';
             }}
           />
           <button 
@@ -115,42 +117,42 @@ export default function Header({ onSearchChange, searchQuery }) {
           {/* Hotline info */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <div style={{
-              backgroundColor: '#f1f5f9',
-              border: '1px solid #e2e8f0',
+              backgroundColor: '#1c1c1f',
+              border: '1px solid var(--border-color)',
               borderRadius: '50%',
               width: '40px',
               height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#475569'
+              color: 'var(--text-secondary)'
             }}>
               <PhoneCall size={18} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>24 Hotline</span>
-              <span style={{ fontSize: '0.8rem', color: '#0f172a', fontWeight: 700, fontFamily: 'var(--font-numbers)' }}>076 095 9302</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>24 Hotline</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)', fontWeight: 700, fontFamily: 'var(--font-numbers)' }}>076 095 9302</span>
             </div>
           </div>
 
           {/* Delivery info */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <div style={{
-              backgroundColor: '#f1f5f9',
-              border: '1px solid #e2e8f0',
+              backgroundColor: '#1c1c1f',
+              border: '1px solid var(--border-color)',
               borderRadius: '50%',
               width: '40px',
               height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#475569'
+              color: 'var(--text-secondary)'
             }}>
               <Truck size={18} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>Islandwide</span>
-              <span style={{ fontSize: '0.8rem', color: '#007DFA', fontWeight: 700 }}>Fast Delivery</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>Islandwide</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 700 }}>Fast Delivery</span>
             </div>
           </div>
         </div>
@@ -164,7 +166,7 @@ export default function Header({ onSearchChange, searchQuery }) {
               border: 'none', 
               cursor: 'pointer', 
               position: 'relative', 
-              color: '#0f172a' 
+              color: 'var(--text-primary)' 
             }}
           >
             <ShoppingCart size={22} />
@@ -191,7 +193,7 @@ export default function Header({ onSearchChange, searchQuery }) {
           </button>
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-            style={{ background: 'none', border: 'none', color: '#0f172a', cursor: 'pointer' }}
+            style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}
           >
             <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>☰</span>
           </button>
@@ -201,8 +203,8 @@ export default function Header({ onSearchChange, searchQuery }) {
 
       {/* SECOND ROW: Categories Selector, Nav Links, User & Cart Buttons */}
       <div style={{ 
-        borderTop: '1px solid #e2e8f0', 
-        backgroundColor: '#f8fafc',
+        borderTop: '1px solid var(--border-color)', 
+        backgroundColor: '#0c0c0e',
         height: '50px',
         display: 'flex',
         alignItems: 'center'
@@ -247,11 +249,11 @@ export default function Header({ onSearchChange, searchQuery }) {
               <Link to="/" style={{ 
                 fontSize: '0.85rem', 
                 fontWeight: 600, 
-                color: location.pathname === '/' ? 'var(--accent)' : '#334155',
+                color: location.pathname === '/' ? 'var(--accent)' : 'var(--text-secondary)',
                 transition: 'color var(--transition-fast)'
               }}
-                onMouseEnter={(e) => e.target.style.color = 'var(--accent)'}
-                onMouseLeave={(e) => e.target.style.color = location.pathname === '/' ? 'var(--accent)' : '#334155'}
+                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.color = location.pathname === '/' ? 'var(--accent)' : 'var(--text-secondary)'}
               >
                 Shop Home
               </Link>
@@ -260,11 +262,11 @@ export default function Header({ onSearchChange, searchQuery }) {
                 <Link to="/admin" style={{ 
                   fontSize: '0.85rem', 
                   fontWeight: 600, 
-                  color: location.pathname === '/admin' ? 'var(--accent)' : '#334155',
+                  color: location.pathname === '/admin' ? 'var(--accent)' : 'var(--text-secondary)',
                   transition: 'color var(--transition-fast)'
                 }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--accent)'}
-                  onMouseLeave={(e) => e.target.style.color = location.pathname === '/admin' ? 'var(--accent)' : '#334155'}
+                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.color = location.pathname === '/admin' ? 'var(--accent)' : 'var(--text-secondary)'}
                 >
                   Admin Control Board
                 </Link>
@@ -284,7 +286,7 @@ export default function Header({ onSearchChange, searchQuery }) {
                   alignItems: 'center', 
                   gap: '0.35rem', 
                   fontSize: '0.85rem', 
-                  color: '#334155',
+                  color: 'var(--text-secondary)',
                   fontWeight: 600 
                 }}>
                   <User size={16} color="var(--accent)" />
@@ -296,7 +298,7 @@ export default function Header({ onSearchChange, searchQuery }) {
                     background: 'none', 
                     border: 'none', 
                     cursor: 'pointer', 
-                    color: '#64748b',
+                    color: 'var(--text-muted)',
                     fontSize: '0.8rem',
                     fontWeight: 500,
                     display: 'flex',
@@ -304,7 +306,7 @@ export default function Header({ onSearchChange, searchQuery }) {
                     padding: 0
                   }}
                   onMouseEnter={(e) => e.target.style.color = 'var(--danger)'}
-                  onMouseLeave={(e) => e.target.style.color = '#64748b'}
+                  onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
                 >
                   <span>Logout</span>
                 </button>
@@ -315,7 +317,7 @@ export default function Header({ onSearchChange, searchQuery }) {
                 alignItems: 'center', 
                 gap: '0.35rem', 
                 fontSize: '0.85rem', 
-                color: '#334155',
+                color: 'var(--text-secondary)',
                 fontWeight: 600
               }}>
                 <User size={16} />
@@ -324,14 +326,14 @@ export default function Header({ onSearchChange, searchQuery }) {
             )}
 
             {/* Vertically split separator */}
-            <div style={{ width: '1px', height: '20px', backgroundColor: '#cbd5e1' }} />
+            <div style={{ width: '1px', height: '20px', backgroundColor: 'var(--border-color)' }} />
 
             {/* Cart Selector Trigger */}
             <button 
               onClick={() => setIsCartOpen(true)}
               style={{
-                background: '#ffffff',
-                border: '1px solid #cbd5e1',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-color)',
                 cursor: 'pointer',
                 padding: '0.4rem 0.85rem',
                 borderRadius: '6px',
@@ -342,10 +344,10 @@ export default function Header({ onSearchChange, searchQuery }) {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'var(--accent)';
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 125, 250, 0.08)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-accent)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#cbd5e1';
+                e.currentTarget.style.borderColor = 'var(--border-color)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
@@ -373,8 +375,8 @@ export default function Header({ onSearchChange, searchQuery }) {
                 )}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: '1.2' }}>
-                <span style={{ fontSize: '0.65rem', color: '#64748b' }}>My Cart</span>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-numbers)' }}>
+                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>My Cart</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-numbers)' }}>
                   රු {cartSubtotal.toLocaleString()}
                 </span>
               </div>
@@ -388,8 +390,8 @@ export default function Header({ onSearchChange, searchQuery }) {
       {/* MOBILE DRAWER DRAWER */}
       {mobileMenuOpen && (
         <div style={{
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #cbd5e1',
+          backgroundColor: 'var(--bg-secondary)',
+          borderBottom: '1px solid var(--border-color)',
           padding: '1rem 1.5rem 1.5rem 1.5rem',
           display: 'flex',
           flexDirection: 'column',
@@ -404,19 +406,19 @@ export default function Header({ onSearchChange, searchQuery }) {
               onChange={handleSearchChangeInternal}
               style={{
                 width: '100%',
-                backgroundColor: '#f1f5f9',
-                border: '1px solid #cbd5e1',
-                color: '#0f172a',
+                backgroundColor: '#1c1c1f',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-primary)',
                 padding: '0.5rem 1rem 0.5rem 2.5rem',
                 borderRadius: '8px',
                 fontSize: '0.85rem',
                 outline: 'none'
               }}
             />
-            <Search size={16} color="#475569" style={{ position: 'absolute', left: '0.85rem', top: '10px' }} />
+            <Search size={16} color="var(--text-secondary)" style={{ position: 'absolute', left: '0.85rem', top: '10px' }} />
           </form>
 
-          <Link to="/" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600, color: '#334155' }}>Shop Home</Link>
+          <Link to="/" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Shop Home</Link>
           
           {isAdmin && (
             <Link to="/admin" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600, color: 'var(--accent)' }}>Admin Panel</Link>
@@ -424,7 +426,7 @@ export default function Header({ onSearchChange, searchQuery }) {
 
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155' }}>
+              <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
                 <User size={16} color="var(--accent)" />
                 <span>My Dashboard ({user?.name})</span>
               </Link>
@@ -433,7 +435,7 @@ export default function Header({ onSearchChange, searchQuery }) {
               </button>
             </>
           ) : (
-            <Link to="/auth" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155', fontWeight: 600 }}>
+            <Link to="/auth" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
               <User size={16} />
               <span>Login / Register</span>
             </Link>
