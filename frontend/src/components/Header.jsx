@@ -29,7 +29,7 @@ export default function Header({ onSearchChange, searchQuery }) {
 
   return (
     <header className="header-glass">
-      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '80px' }}>
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '130px' }}>
         
         {/* Brand Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
@@ -37,9 +37,9 @@ export default function Header({ onSearchChange, searchQuery }) {
             src="/logo.png" 
             alt="Right Tech Logo" 
             style={{ 
-              height: '42px', 
+              height: '110px', 
               objectFit: 'contain',
-              maxWidth: '220px'
+              maxWidth: '380px'
             }} 
           />
         </Link>
@@ -236,6 +236,13 @@ export default function Header({ onSearchChange, searchQuery }) {
           }
           .nav-mobile-controls {
             display: flex !important;
+          }
+          .header-glass .container {
+            height: 90px !important;
+          }
+          .header-glass img {
+            height: 70px !important;
+            max-width: 250px !important;
           }
         }
       `}</style>
