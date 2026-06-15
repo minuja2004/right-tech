@@ -45,9 +45,9 @@ export default function Header({ onSearchChange, searchQuery }) {
             src="/logo.png" 
             alt="Right Technology Holdings Logo" 
             style={{ 
-              height: '85px', 
+              height: '70px', 
               objectFit: 'contain',
-              maxWidth: '380px',
+              maxWidth: '330px',
               display: 'block'
             }} 
           />
