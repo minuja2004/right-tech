@@ -402,17 +402,17 @@ export default function ProductDetails() {
             <div style={{ textAlign: 'center', padding: '0.5rem' }}>
               <Shield size={20} color="var(--accent)" style={{ margin: '0 auto 0.25rem auto' }} />
               <p style={{ fontSize: '0.7rem', fontWeight: 600 }}>100% Genuine</p>
-              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Direct imports</p>
+              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Official Hardware</p>
             </div>
             <div style={{ textAlign: 'center', padding: '0.5rem' }}>
               <Sparkles size={20} color="var(--accent)" style={{ margin: '0 auto 0.25rem auto' }} />
-              <p style={{ fontSize: '0.7rem', fontWeight: 600 }}>Lab Tested</p>
-              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Verified contents</p>
+              <p style={{ fontSize: '0.7rem', fontWeight: 600 }}>Official Warranty</p>
+              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Authorized Dealer</p>
             </div>
             <div style={{ textAlign: 'center', padding: '0.5rem' }}>
               <RefreshCw size={20} color="var(--accent)" style={{ margin: '0 auto 0.25rem auto' }} />
-              <p style={{ fontSize: '0.7rem', fontWeight: 600 }}>Easy Returns</p>
-              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>7 day guarantee</p>
+              <p style={{ fontSize: '0.7rem', fontWeight: 600 }}>Expert Support</p>
+              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Post-install support</p>
             </div>
           </div>
 

@@ -1,13 +1,13 @@
-/* Premium Sports Nutrition Supplement Store Global Styling */
+/* Premium IT & CCTV Solutions - Right Tech - Global Styling */
 
 :root {
   /* Colors */
   --bg-primary: #0a0a0a;
   --bg-secondary: #141416;
   --bg-card: #141416;
-  --accent: #F08119;
-  --accent-hover: #e0700a;
-  --accent-light: rgba(240, 129, 25, 0.1);
+  --accent: #007DFA;
+  --accent-hover: #0065c9;
+  --accent-light: rgba(0, 125, 250, 0.1);
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
@@ -30,7 +30,7 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.8);
-  --shadow-accent: 0 0 15px rgba(240, 129, 25, 0.25);
+  --shadow-accent: 0 0 15px rgba(0, 125, 250, 0.25);
 }
 
 /* Reset */

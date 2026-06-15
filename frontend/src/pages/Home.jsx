@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
-import { SlidersHorizontal, Search, Dumbbell, Zap, Flame, ShieldCheck } from 'lucide-react';
+import { SlidersHorizontal, Search, Laptop, Printer, Camera, Wrench, ShieldCheck } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000/api';
 
-const categories = ['All', 'Protein', 'Pre-workout', 'Creatine', 'Recovery', 'Vitamins'];
+const categories = ['All', 'Laptops', 'Printers', 'CCTV & Security', 'Gadgets', 'IT Services'];
 
 export default function Home({ searchQuery, onSearchChange }) {
   const [products, setProducts] = useState([]);
@@ -53,7 +53,7 @@ export default function Home({ searchQuery, onSearchChange }) {
       <section style={{
         position: 'relative',
         height: '380px',
-        background: 'linear-gradient(rgba(0,0,0,0.5), rgba(10,10,10,1)), url("https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop")',
+        background: 'linear-gradient(rgba(0,0,0,0.65), rgba(10,10,10,1)), url("https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
@@ -74,20 +74,20 @@ export default function Home({ searchQuery, onSearchChange }) {
               borderRadius: '4px',
               letterSpacing: '0.1em'
             }}>
-              ELITE ATHLETIC NUTRITION
+              Right Tech IT & CCTV Solutions
             </span>
             <h1 style={{
-              fontSize: '3.5rem',
+              fontSize: '3.2rem',
               fontFamily: 'var(--font-heading)',
               lineHeight: '1.05',
               marginTop: '0.75rem',
               marginBottom: '1rem',
               textTransform: 'uppercase'
             }}>
-              UNLEASH YOUR <span style={{ color: 'var(--accent)' }}>MAXIMUM</span> POTENTIAL
+              INTELLIGENT TECHNOLOGY FOR <span style={{ color: 'var(--accent)' }}>YOUR</span> ENTERPRISE
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-              Engineered for champions. Right Tech sports supplements deliver pure, clinically-dosed ingredients to fuel strength, focus, recovery, and hypertrophy.
+              We provide professional IT support, CCTV surveillance installations, laptop/printer repairs, and premium technical gadgets. Engineered for security, speed, and reliability.
             </p>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button 
@@ -97,7 +97,7 @@ export default function Home({ searchQuery, onSearchChange }) {
                 }} 
                 className="btn btn-primary"
               >
-                Explore Supplements
+                Browse Shop & Services
               </button>
             </div>
           </div>
@@ -117,31 +117,31 @@ export default function Home({ searchQuery, onSearchChange }) {
             padding: '1.5rem'
           }} className="feature-strip">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Flame color="var(--accent)" size={24} />
+              <Camera color="var(--accent)" size={24} />
               <div>
-                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>Explosive Power</h4>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pre-workouts for heavy lifts</p>
+                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>CCTV Setup</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>HD security systems install</p>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Dumbbell color="var(--accent)" size={24} />
+              <Laptop color="var(--accent)" size={24} />
               <div>
-                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>Lean Muscle</h4>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Ultra-filtered whey isolate</p>
+                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>Gadget Retail</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Laptops, printers & accessories</p>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Zap color="var(--accent)" size={24} />
+              <Wrench color="var(--accent)" size={24} />
               <div>
-                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>Rapid Recovery</h4>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Premium branched amino acids</p>
+                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>Hardware Repair</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Laptop & printer diagnosis</p>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <ShieldCheck color="var(--accent)" size={24} />
               <div>
-                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>Pure Quality</h4>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>No banned fillers. Lab-verified.</p>
+                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase' }}>IT Solutions</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Managed support & security</p>
               </div>
             </div>
           </div>

@@ -62,38 +62,38 @@ export default function App() {
                 {/* Brand description column */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   <h4 style={{ color: '#fff', fontSize: '1rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
-                    Right Tech Sports
+                    Right Tech IT & CCTV Solutions
                   </h4>
                   <p style={{ lineHeight: '1.6' }}>
-                    Premium sports nutrition, athletic performance enhancers, and high-quality supplements. Engineered for athletes who demand pure results.
+                    Professional IT support services, high-definition CCTV security camera installations, laptop & printer repair servicing, and tech gadget retail.
                   </p>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    © 2026 RIGHT TECH Sports Nutrition. All rights reserved.
+                    © 2026 RIGHT TECH IT & CCTV Solutions. All rights reserved.
                   </p>
                 </div>
 
                 {/* Shop links */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <h5 style={{ color: '#fff', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Categories</h5>
-                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Whey Proteins</Link>
-                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Pre-Workouts</Link>
-                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Creatine Monohydrate</Link>
-                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Intra-Workout Aminos</Link>
+                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Laptops & PCs</Link>
+                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Laser Printers</Link>
+                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>CCTV Surveillance</Link>
+                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>IT Services & Repair</Link>
                 </div>
 
                 {/* Support links */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <h5 style={{ color: '#fff', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Help & Support</h5>
-                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Shipping Policy</Link>
-                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Returns & Refunds</Link>
+                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Service Level Agreement</Link>
+                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Repair Warranty</Link>
                   <Link to="/" style={{ color: 'var(--text-secondary)' }}>FAQs</Link>
-                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Store Pickup Locations</Link>
+                  <Link to="/" style={{ color: 'var(--text-secondary)' }}>Support Hotline</Link>
                 </div>
 
                 {/* Contact info */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <h5 style={{ color: '#fff', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Contact Info</h5>
-                  <p>Right Tech Gym & Nutrition</p>
+                  <p>Right Tech IT & CCTV Solutions</p>
                   <p>123 Galle Road, Colombo, Sri Lanka</p>
                   <p>Hotline: +94 77 123 4567</p>
                   <p>Email: info@righttech.com</p>

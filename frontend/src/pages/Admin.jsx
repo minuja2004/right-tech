@@ -21,7 +21,7 @@ export default function Admin() {
   const [editingId, setEditingId] = useState(null);
   const [productForm, setProductForm] = useState({
     name: '',
-    category: 'Protein',
+    category: 'Laptops',
     price: '',
     description: '',
     stock: '',
@@ -30,7 +30,7 @@ export default function Admin() {
   });
 
   // Dynamic Options builder inside admin panel
-  const [selectionForm, setSelectionForm] = useState({ name: 'Size', value: '', priceModifier: '0' });
+  const [selectionForm, setSelectionForm] = useState({ name: 'Specifications', value: '', priceModifier: '0' });
   const [selectionsList, setSelectionsList] = useState([]); // Array of selections e.g. { name: 'Size', values: [...] }
 
   // Upload state
@@ -205,7 +205,7 @@ export default function Admin() {
       // Reset form
       setProductForm({
         name: '',
-        category: 'Protein',
+        category: 'Laptops',
         price: '',
         description: '',
         stock: '',
@@ -466,11 +466,11 @@ export default function Admin() {
                   onChange={(e) => setProductForm((p) => ({ ...p, category: e.target.value }))}
                   className="form-select"
                 >
-                  <option value="Protein">Protein</option>
-                  <option value="Pre-workout">Pre-workout</option>
-                  <option value="Creatine">Creatine</option>
-                  <option value="Recovery">Recovery</option>
-                  <option value="Vitamins">Vitamins</option>
+                  <option value="Laptops">Laptops</option>
+                  <option value="Printers">Printers</option>
+                  <option value="CCTV & Security">CCTV & Security</option>
+                  <option value="Gadgets">Gadgets</option>
+                  <option value="IT Services">IT Services</option>
                 </select>
               </div>
               <div className="form-group">
@@ -599,15 +599,19 @@ export default function Admin() {
                     className="form-select"
                     style={{ padding: '0.6rem' }}
                   >
-                    <option value="Size">Size</option>
-                    <option value="Flavor">Flavor</option>
+                    <option value="Specifications">Specifications</option>
+                    <option value="Color Theme">Color Theme</option>
+                    <option value="Storage Option">Storage Option</option>
+                    <option value="Support Plan">Support Plan</option>
+                    <option value="Location Range">Location Range</option>
+                    <option value="Priority Service">Priority Service</option>
                   </select>
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label>Option Choice Value</label>
                   <input
                     type="text"
-                    placeholder="e.g. 2.5kg or Chocolate"
+                    placeholder="e.g. 16GB RAM or Black"
                     value={selectionForm.value}
                     onChange={(e) => setSelectionForm(s => ({ ...s, value: e.target.value }))}
                     className="form-input"
@@ -645,7 +649,7 @@ export default function Admin() {
               <button 
                 type="button" 
                 onClick={() => {
-                  setProductForm({ name: '', category: 'Protein', price: '', description: '', stock: '', allowKoko: true, images: [] });
+                  setProductForm({ name: '', category: 'Laptops', price: '', description: '', stock: '', allowKoko: true, images: [] });
                   setSelectionsList([]);
                   setIsEditing(false);
                   setEditingId(null);

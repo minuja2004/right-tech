@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Search, LogOut, Dumbbell, Menu, X } from 'lucide-react';
+import { ShoppingCart, User, Search, LogOut, Cpu, Menu, X } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 
@@ -33,13 +33,13 @@ export default function Header({ onSearchChange, searchQuery }) {
         
         {/* Brand Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Dumbbell size={28} color="var(--accent)" strokeWidth={2.5} />
+          <Cpu size={28} color="var(--accent)" strokeWidth={2.5} />
           <span style={{ 
             fontFamily: 'var(--font-heading)', 
             fontWeight: 900, 
             fontSize: '1.5rem', 
             letterSpacing: '0.05em',
-            background: 'linear-gradient(90deg, #FFFFFF 0%, #F08119 100%)',
+            background: 'linear-gradient(90deg, #FFFFFF 0%, var(--accent) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             textTransform: 'uppercase'
