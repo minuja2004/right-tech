@@ -48,8 +48,6 @@ export default function Header({ onSearchChange, searchQuery }) {
               height: '85px', 
               objectFit: 'contain',
               maxWidth: '380px',
-              /* Invert colors to make dark text white, while hue-rotating 180deg to preserve the blue brand color */
-              filter: 'invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)',
               display: 'block'
             }} 
           />
