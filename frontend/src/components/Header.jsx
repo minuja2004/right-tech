@@ -40,17 +40,17 @@ export default function Header({ onSearchChange, searchQuery }) {
         gap: '2rem'
       }} className="header-first-row">
         
-        {/* Brand Logo (Left) */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0, margin: 0, padding: 0 }}>
           <img 
             src="/logo.png" 
             alt="Right Technology Holdings Logo" 
             style={{ 
-              height: '82px', 
+              height: '85px', 
               objectFit: 'contain',
-              maxWidth: '350px',
+              maxWidth: '380px',
               /* Invert colors to make dark text white, while hue-rotating 180deg to preserve the blue brand color */
-              filter: 'invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)'
+              filter: 'invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)',
+              display: 'block'
             }} 
           />
         </Link>
@@ -458,6 +458,7 @@ export default function Header({ onSearchChange, searchQuery }) {
           }
           .header-first-row img {
             height: 50px !important;
+            max-width: 60% !important;
           }
         }
       `}</style>
