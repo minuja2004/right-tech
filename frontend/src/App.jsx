@@ -61,9 +61,16 @@ export default function App() {
                 
                 {/* Brand description column */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <h4 style={{ color: '#fff', fontSize: '1rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
-                    Right Tech IT & CCTV Solutions
-                  </h4>
+                  <img 
+                    src="/logo.png" 
+                    alt="Right Tech Logo" 
+                    style={{ 
+                      height: '35px', 
+                      objectFit: 'contain',
+                      alignSelf: 'flex-start',
+                      marginBottom: '0.25rem'
+                    }} 
+                  />
                   <p style={{ lineHeight: '1.6' }}>
                     Professional IT support services, high-definition CCTV security camera installations, laptop & printer repair servicing, and tech gadget retail.
                   </p>

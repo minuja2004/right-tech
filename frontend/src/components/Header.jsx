@@ -32,20 +32,16 @@ export default function Header({ onSearchChange, searchQuery }) {
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '80px' }}>
         
         {/* Brand Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Cpu size={28} color="var(--accent)" strokeWidth={2.5} />
-          <span style={{ 
-            fontFamily: 'var(--font-heading)', 
-            fontWeight: 900, 
-            fontSize: '1.5rem', 
-            letterSpacing: '0.05em',
-            background: 'linear-gradient(90deg, #FFFFFF 0%, var(--accent) 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            textTransform: 'uppercase'
-          }}>
-            Right Tech
-          </span>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img 
+            src="/logo.png" 
+            alt="Right Tech Logo" 
+            style={{ 
+              height: '42px', 
+              objectFit: 'contain',
+              maxWidth: '220px'
+            }} 
+          />
         </Link>
 
         {/* Real-time Search Input */}
