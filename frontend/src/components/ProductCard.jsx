@@ -1,18 +1,43 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, ShoppingCart } from 'lucide-react';
+import { Eye, ShoppingCart, Trash2 } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
 
 export default function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext);
+  const { token, isAdmin } = useContext(AuthContext);
+
+  const handleDeleteProduct = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!window.confirm(`Are you sure you want to delete this product: "${product.name}"?`)) return;
+    try {
+      const response = await fetch(`http://localhost:5000/api/products/${product._id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert('Product deleted successfully!');
+        window.location.reload();
+      } else {
+        throw new Error(data.message || 'Failed to delete product');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   const hasModifiers = product.selections?.some(sel => 
     sel.values?.some(val => val.priceModifier > 0)
   );
 
   const displayPrice = hasModifiers 
-    ? `From ರು ${product.price.toLocaleString()}` 
-    : `ರು ${product.price.toLocaleString()}`;
+    ? `From රු ${product.price.toLocaleString()}` 
+    : `රු ${product.price.toLocaleString()}`;
 
   const isOutOfStock = product.stock <= 0;
 
@@ -52,6 +77,35 @@ export default function ProductCard({ product }) {
             <span className="badge badge-success">In Stock</span>
           )}
         </div>
+        {/* Floating Admin Delete Action */}
+        {isAdmin && (
+          <button
+            onClick={handleDeleteProduct}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              zIndex: 10,
+              backgroundColor: 'rgba(239, 68, 68, 0.9)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              cursor: 'pointer',
+              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+              transition: 'transform 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            title="Delete Product"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </Link>
 
       {/* Product Details */}

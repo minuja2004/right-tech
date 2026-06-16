@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ProductCard from '../components/ProductCard';
-import { SlidersHorizontal, Search, Laptop, Printer, Camera, Wrench, ShieldCheck } from 'lucide-react';
+import { SlidersHorizontal, Search, Laptop, Printer, Camera, Wrench, ShieldCheck, Trash2 } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 
 const API_URL = 'http://localhost:5000/api';
 
 const categories = ['All', 'Laptops', 'Printers', 'CCTV & Security', 'Gadgets', 'IT Services'];
 
 export default function Home({ searchQuery, onSearchChange }) {
+  const { token, isAdmin } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [flyers, setFlyers] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -53,6 +55,26 @@ export default function Home({ searchQuery, onSearchChange }) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteFlyer = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this flyer?')) return;
+    try {
+      const response = await fetch(`${API_URL}/products/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFlyers(prev => prev.filter(f => f._id !== id));
+      } else {
+        throw new Error(data.message || 'Failed to delete flyer');
+      }
+    } catch (err) {
+      alert(err.message);
     }
   };
 
@@ -191,7 +213,8 @@ export default function Home({ searchQuery, onSearchChange }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'transform var(--transition-normal), box-shadow var(--transition-normal)',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    position: 'relative'
                   }}
                   className="flyer-card"
                   onMouseEnter={(e) => {
@@ -205,6 +228,37 @@ export default function Home({ searchQuery, onSearchChange }) {
                     e.currentTarget.style.borderColor = 'var(--border-color)';
                   }}
                 >
+                  {isAdmin && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteFlyer(flyer._id);
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        zIndex: 10,
+                        backgroundColor: 'rgba(239, 68, 68, 0.9)',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '32px',
+                        height: '32px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#ffffff',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                        transition: 'transform 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                      title="Delete Flyer"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                   {flyer.images && flyer.images.length > 0 ? (
                     <img 
                       src={flyer.images[0]} 

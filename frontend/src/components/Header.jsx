@@ -1,15 +1,173 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Search, LogOut, PhoneCall, Truck, ChevronDown, ListFilter } from 'lucide-react';
+import { ShoppingCart, User, Search, LogOut, PhoneCall, Truck, ChevronDown, ListFilter, Plus, X, CloudUpload } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 
+const API_URL = 'http://localhost:5000/api';
+
 export default function Header({ onSearchChange, searchQuery }) {
-  const { setIsCartOpen, cartTotalCount, cartSubtotal } = useContext(CartContext);
-  const { user, logout, isAuthenticated, isAdmin } = useContext(AuthContext);
+  const { setIsCartOpen, cartTotalCount } = useContext(CartContext);
+  const { user, logout, isAuthenticated, isAdmin, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Modal states
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [isAddFlyerModalOpen, setIsAddFlyerModalOpen] = useState(false);
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
+  // Form states
+  const [productForm, setProductForm] = useState({
+    name: '',
+    category: 'Laptops',
+    price: '',
+    description: '',
+    stock: '',
+    allowKoko: true,
+    images: []
+  });
+
+  const [flyerForm, setFlyerForm] = useState({
+    name: '',
+    category: 'Flyers',
+    price: 0,
+    description: 'Flyer banner',
+    stock: 100,
+    allowKoko: false,
+    images: []
+  });
+
+  const [projectForm, setProjectForm] = useState({
+    title: '',
+    category: 'CCTV Setup',
+    description: '',
+    images: []
+  });
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+
+  const handleFileUpload = async (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await fetch(`${API_URL}/products/upload`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (type === 'product') {
+          setProductForm((prev) => ({ ...prev, images: [...prev.images, data.url] }));
+        } else if (type === 'flyer') {
+          setFlyerForm((prev) => ({ ...prev, images: [...prev.images, data.url] }));
+        } else if (type === 'project') {
+          setProjectForm((prev) => ({ ...prev, images: [...prev.images, data.url] }));
+        }
+      } else {
+        throw new Error(data.message || 'Upload failed');
+      }
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleProductSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_URL}/products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(productForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Product added successfully!');
+        setIsAddProductModalOpen(false);
+        setProductForm({ name: '', category: 'Laptops', price: '', description: '', stock: '', allowKoko: true, images: [] });
+        window.location.reload();
+      } else {
+        throw new Error(data.message || 'Failed to add product');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleFlyerSubmit = async (e) => {
+    e.preventDefault();
+    if (flyerForm.images.length === 0) {
+      alert('Please upload an image for the flyer first.');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(flyerForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Flyer added successfully!');
+        setIsAddFlyerModalOpen(false);
+        setFlyerForm({ name: '', category: 'Flyers', price: 0, description: 'Flyer banner', stock: 100, allowKoko: false, images: [] });
+        window.location.reload();
+      } else {
+        throw new Error(data.message || 'Failed to add flyer');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleProjectSubmit = async (e) => {
+    e.preventDefault();
+    if (projectForm.images.length === 0) {
+      alert('Please upload an image for the project first.');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/projects`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(projectForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Project added successfully!');
+        setIsAddProjectModalOpen(false);
+        setProjectForm({ title: '', category: 'CCTV Setup', description: '', images: [] });
+        window.location.reload();
+      } else {
+        throw new Error(data.message || 'Failed to add project');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -30,6 +188,91 @@ export default function Header({ onSearchChange, searchQuery }) {
   return (
     <header style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', width: '100%' }}>
       
+      {/* Admin Quick Bar */}
+      {isAdmin && (
+        <div style={{
+          backgroundColor: '#0a0a0a',
+          borderBottom: '1px solid var(--accent)',
+          padding: '0.5rem 1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontSize: '0.75rem',
+          color: '#ffffff'
+        }} className="admin-quick-toolbar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Admin Toolbar:
+            </span>
+            <button 
+              onClick={() => setIsAddProductModalOpen(true)}
+              style={{
+                backgroundColor: '#1c1c1f',
+                border: '1px solid var(--border-color)',
+                borderRadius: '4px',
+                color: '#ffffff',
+                padding: '0.25rem 0.65rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = '#ffffff'; }}
+            >
+              <Plus size={12} /> Add Product
+            </button>
+            <button 
+              onClick={() => setIsAddFlyerModalOpen(true)}
+              style={{
+                backgroundColor: '#1c1c1f',
+                border: '1px solid var(--border-color)',
+                borderRadius: '4px',
+                color: '#ffffff',
+                padding: '0.25rem 0.65rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = '#ffffff'; }}
+            >
+              <Plus size={12} /> Add Flyer
+            </button>
+            <button 
+              onClick={() => setIsAddProjectModalOpen(true)}
+              style={{
+                backgroundColor: '#1c1c1f',
+                border: '1px solid var(--border-color)',
+                borderRadius: '4px',
+                color: '#ffffff',
+                padding: '0.25rem 0.65rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = '#ffffff'; }}
+            >
+              <Plus size={12} /> Add Project
+            </button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Link to="/admin" style={{ color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.2s', fontWeight: 600 }} onMouseEnter={(e) => e.target.style.color = 'var(--accent)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}>
+              Orders Dashboard →
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* FIRST ROW: Logo, Search Bar, Info Badges */}
       <div className="container" style={{ 
         display: 'flex', 
@@ -256,19 +499,17 @@ export default function Header({ onSearchChange, searchQuery }) {
                 Shop Home
               </Link>
               
-              {isAdmin && (
-                <Link to="/admin" style={{ 
-                  fontSize: '0.85rem', 
-                  fontWeight: 600, 
-                  color: location.pathname === '/admin' ? 'var(--accent)' : 'var(--text-secondary)',
-                  transition: 'color var(--transition-fast)'
-                }}
-                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.color = location.pathname === '/admin' ? 'var(--accent)' : 'var(--text-secondary)'}
-                >
-                  Admin Control Board
-                </Link>
-              )}
+              <Link to="/projects" style={{ 
+                fontSize: '0.85rem', 
+                fontWeight: 600, 
+                color: location.pathname === '/projects' ? 'var(--accent)' : 'var(--text-secondary)',
+                transition: 'color var(--transition-fast)'
+              }}
+                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.color = location.pathname === '/projects' ? 'var(--accent)' : 'var(--text-secondary)'}
+              >
+                Our Projects
+              </Link>
             </nav>
 
           </div>
@@ -418,9 +659,7 @@ export default function Header({ onSearchChange, searchQuery }) {
 
           <Link to="/" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Shop Home</Link>
           
-          {isAdmin && (
-            <Link to="/admin" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600, color: 'var(--accent)' }}>Admin Panel</Link>
-          )}
+          <Link to="/projects" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Our Projects</Link>
 
           {isAuthenticated ? (
             <>
@@ -460,6 +699,423 @@ export default function Header({ onSearchChange, searchQuery }) {
           }
         }
       `}</style>
+
+      {/* ADD PRODUCT MODAL */}
+      {isAddProductModalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2000,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: 'var(--bg-secondary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '12px',
+            padding: '2rem',
+            width: '100%',
+            maxWidth: '550px',
+            position: 'relative',
+            maxHeight: '90vh',
+            overflowY: 'auto'
+          }} className="animate-fade-in">
+            <button 
+              onClick={() => setIsAddProductModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={20} />
+            </button>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#ffffff', textTransform: 'uppercase' }}>
+              Add New Product
+            </h3>
+            
+            <form onSubmit={handleProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Product Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={productForm.name} 
+                  onChange={(e) => setProductForm(p => ({ ...p, name: e.target.value }))}
+                  style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Category</label>
+                  <select 
+                    value={productForm.category} 
+                    onChange={(e) => setProductForm(p => ({ ...p, category: e.target.value }))}
+                    style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+                  >
+                    <option value="Laptops">Laptops</option>
+                    <option value="Printers">Printers</option>
+                    <option value="CCTV & Security">CCTV & Security</option>
+                    <option value="Gadgets">Gadgets</option>
+                    <option value="IT Services">IT Services</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Base Price (LKR)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={productForm.price} 
+                    onChange={(e) => setProductForm(p => ({ ...p, price: e.target.value }))}
+                    style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Stock Qty</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={productForm.stock} 
+                    onChange={(e) => setProductForm(p => ({ ...p, stock: e.target.value }))}
+                    style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1.5rem' }}>
+                  <input 
+                    type="checkbox" 
+                    id="allowKoko"
+                    checked={productForm.allowKoko} 
+                    onChange={(e) => setProductForm(p => ({ ...p, allowKoko: e.target.checked }))}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <label htmlFor="allowKoko" style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', cursor: 'pointer' }}>Allow Koko split payments</label>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Description</label>
+                <textarea 
+                  required 
+                  rows={3}
+                  value={productForm.description} 
+                  onChange={(e) => setProductForm(p => ({ ...p, description: e.target.value }))}
+                  style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem', resize: 'vertical' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Product Images</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    backgroundColor: '#1c1c1f',
+                    border: '1px dashed var(--border-color)',
+                    borderRadius: '6px',
+                    padding: '0.5rem 1rem',
+                    cursor: 'pointer',
+                    fontSize: '0.8rem',
+                    color: 'var(--text-secondary)'
+                  }}>
+                    <CloudUpload size={16} />
+                    <span>{uploading ? 'Uploading...' : 'Upload Image'}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'product')} 
+                      style={{ display: 'none' }}
+                      disabled={uploading}
+                    />
+                  </label>
+                  {productForm.images.map((img, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: '50px', height: '50px', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                      <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button 
+                        type="button"
+                        onClick={() => setProductForm(p => ({ ...p, images: p.images.filter((_, i) => i !== idx) }))}
+                        style={{ position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(239, 68, 68, 0.9)', border: 'none', color: '#fff', fontSize: '0.5rem', cursor: 'pointer', padding: '1px' }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                style={{ width: '100%', marginTop: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+                disabled={uploading}
+              >
+                Create Product
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADD FLYER MODAL */}
+      {isAddFlyerModalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2000,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: 'var(--bg-secondary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '12px',
+            padding: '2rem',
+            width: '100%',
+            maxWidth: '450px',
+            position: 'relative'
+          }} className="animate-fade-in">
+            <button 
+              onClick={() => setIsAddFlyerModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={20} />
+            </button>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#ffffff', textTransform: 'uppercase' }}>
+              Add Promotional Flyer
+            </h3>
+            
+            <form onSubmit={handleFlyerSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Flyer Title / Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  placeholder="e.g. IT support setup promo"
+                  value={flyerForm.name} 
+                  onChange={(e) => setFlyerForm(p => ({ ...p, name: e.target.value }))}
+                  style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Upload Flyer Banner Image</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    backgroundColor: '#1c1c1f',
+                    border: '1px dashed var(--border-color)',
+                    borderRadius: '6px',
+                    padding: '0.5rem 1rem',
+                    cursor: 'pointer',
+                    fontSize: '0.8rem',
+                    color: 'var(--text-secondary)',
+                    flexGrow: 1,
+                    justifyContent: 'center'
+                  }}>
+                    <CloudUpload size={16} />
+                    <span>{uploading ? 'Uploading...' : 'Upload Image'}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'flyer')} 
+                      style={{ display: 'none' }}
+                      disabled={uploading}
+                    />
+                  </label>
+                  {flyerForm.images.map((img, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                      <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button 
+                        type="button"
+                        onClick={() => setFlyerForm(p => ({ ...p, images: [] }))}
+                        style={{ position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(239, 68, 68, 0.9)', border: 'none', color: '#fff', fontSize: '0.5rem', cursor: 'pointer', padding: '2px' }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                style={{ width: '100%', marginTop: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+                disabled={uploading || flyerForm.images.length === 0}
+              >
+                Publish Flyer
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADD PROJECT MODAL */}
+      {isAddProjectModalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2000,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: 'var(--bg-secondary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '12px',
+            padding: '2rem',
+            width: '100%',
+            maxWidth: '500px',
+            position: 'relative'
+          }} className="animate-fade-in">
+            <button 
+              onClick={() => setIsAddProjectModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={20} />
+            </button>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#ffffff', textTransform: 'uppercase' }}>
+              Add Completed Project
+            </h3>
+            
+            <form onSubmit={handleProjectSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Project Title</label>
+                <input 
+                  type="text" 
+                  required 
+                  placeholder="e.g. CCTV Camera setup at Liberty Plaza"
+                  value={projectForm.title} 
+                  onChange={(e) => setProjectForm(p => ({ ...p, title: e.target.value }))}
+                  style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Project Category</label>
+                <select 
+                  value={projectForm.category} 
+                  onChange={(e) => setProjectForm(p => ({ ...p, category: e.target.value }))}
+                  style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+                >
+                  <option value="CCTV Setup">CCTV Setup</option>
+                  <option value="IT Support">IT Support</option>
+                  <option value="Gadget Retail">Gadget Retail</option>
+                  <option value="Networking">Networking</option>
+                  <option value="Repair Job">Repair Job</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Project Description</label>
+                <textarea 
+                  required 
+                  rows={3}
+                  placeholder="Describe the installation details, hardware used, and completed scope..."
+                  value={projectForm.description} 
+                  onChange={(e) => setProjectForm(p => ({ ...p, description: e.target.value }))}
+                  style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem', resize: 'vertical' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Upload Project Image</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    backgroundColor: '#1c1c1f',
+                    border: '1px dashed var(--border-color)',
+                    borderRadius: '6px',
+                    padding: '0.5rem 1rem',
+                    cursor: 'pointer',
+                    fontSize: '0.8rem',
+                    color: 'var(--text-secondary)',
+                    flexGrow: 1,
+                    justifyContent: 'center'
+                  }}>
+                    <CloudUpload size={16} />
+                    <span>{uploading ? 'Uploading...' : 'Upload Image'}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'project')} 
+                      style={{ display: 'none' }}
+                      disabled={uploading}
+                    />
+                  </label>
+                  {projectForm.images.map((img, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                      <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button 
+                        type="button"
+                        onClick={() => setProjectForm(p => ({ ...p, images: [] }))}
+                        style={{ position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(239, 68, 68, 0.9)', border: 'none', color: '#fff', fontSize: '0.5rem', cursor: 'pointer', padding: '2px' }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                style={{ width: '100%', marginTop: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+                disabled={uploading || projectForm.images.length === 0}
+              >
+                Publish Project
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

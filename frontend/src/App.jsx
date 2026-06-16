@@ -14,6 +14,7 @@ import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Auth from './pages/Auth';
+import OurProjects from './pages/OurProjects';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,6 +43,7 @@ export default function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/projects" element={<OurProjects />} />
               </Routes>
             </main>
 
