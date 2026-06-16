@@ -226,6 +226,10 @@ main {
 }
 
 @media (max-width: 768px) {
+  .flyers-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem; /* Staggered 2-column mobile gaps */

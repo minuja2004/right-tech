@@ -471,6 +471,7 @@ export default function Admin() {
                   <option value="CCTV & Security">CCTV & Security</option>
                   <option value="Gadgets">Gadgets</option>
                   <option value="IT Services">IT Services</option>
+                  <option value="Flyers">Flyers</option>
                 </select>
               </div>
               <div className="form-group">

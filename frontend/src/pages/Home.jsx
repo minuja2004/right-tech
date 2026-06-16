@@ -8,9 +8,22 @@ const categories = ['All', 'Laptops', 'Printers', 'CCTV & Security', 'Gadgets', 
 
 export default function Home({ searchQuery, onSearchChange }) {
   const [products, setProducts] = useState([]);
+  const [flyers, setFlyers] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const fetchFlyers = async () => {
+    try {
+      const response = await fetch(`${API_URL}/products?category=Flyers`);
+      const data = await response.json();
+      if (data.success) {
+        setFlyers(data.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch flyers:', err.message);
+    }
+  };
 
   const fetchProducts = async (category, search) => {
     setLoading(true);
@@ -30,7 +43,9 @@ export default function Home({ searchQuery, onSearchChange }) {
       const response = await fetch(`${API_URL}/products${queryStr}`);
       const data = await response.json();
       if (data.success) {
-        setProducts(data.data);
+        // Filter out flyers from the main products catalog
+        const filtered = data.data.filter(p => p.category !== 'Flyers');
+        setProducts(filtered);
       } else {
         throw new Error(data.message || 'Failed to fetch products');
       }
@@ -40,6 +55,11 @@ export default function Home({ searchQuery, onSearchChange }) {
       setLoading(false);
     }
   };
+
+  // Fetch flyers once on mount
+  useEffect(() => {
+    fetchFlyers();
+  }, []);
 
   // Trigger fetch when category or search changes
   useEffect(() => {
@@ -147,6 +167,64 @@ export default function Home({ searchQuery, onSearchChange }) {
           </div>
         </div>
       </section>
+
+      {/* Flyers Section */}
+      {flyers && flyers.length > 0 && (
+        <section style={{ marginBottom: '3rem' }}>
+          <div className="container">
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '1.5rem',
+              width: '100%'
+            }} className="flyers-grid">
+              {flyers.map((flyer) => (
+                <div 
+                  key={flyer._id} 
+                  style={{
+                    overflow: 'hidden',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-secondary)',
+                    aspectRatio: '16/9',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'transform var(--transition-normal), box-shadow var(--transition-normal)',
+                    cursor: 'pointer'
+                  }}
+                  className="flyer-card"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 10px 20px rgba(0, 125, 250, 0.15)';
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.borderColor = 'var(--border-color)';
+                  }}
+                >
+                  {flyer.images && flyer.images.length > 0 ? (
+                    <img 
+                      src={flyer.images[0]} 
+                      alt={flyer.name} 
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }}
+                    />
+                  ) : (
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No Image Available</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Shop Section */}
       <section id="shop-catalog" className="container" style={{ scrollMarginTop: '100px' }}>
