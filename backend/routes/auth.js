@@ -9,7 +9,22 @@ const { protect } = require('../middleware/auth');
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, phone, role } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({ success: false, message: 'Please add a phone number' });
+    }
+
+    // Strong password validation
+    if (!password || password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
+    }
+    if (!/[A-Z]/.test(password)) {
+      return res.status(400).json({ success: false, message: 'Password must contain at least one capital letter' });
+    }
+    if (!/[^A-Za-z0-9]/.test(password)) {
+      return res.status(400).json({ success: false, message: 'Password must contain at least one symbol (special character)' });
+    }
 
     // Check if user exists
     const userExists = await User.findOne({ email });
@@ -22,6 +37,7 @@ router.post('/register', async (req, res) => {
       name,
       email,
       password,
+      phone,
       role: role || 'user' // Default to user, but allow seeding
     });
 

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Sparkles, UserCheck } from 'lucide-react';
+import { User, Mail, Lock, Sparkles, UserCheck, Phone } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 export default function Auth() {
@@ -11,7 +11,9 @@ export default function Auth() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: '',
+    phone: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -34,7 +36,24 @@ export default function Auth() {
         await login(formData.email, formData.password);
         navigate('/');
       } else {
-        await register(formData.name, formData.email, formData.password);
+        // Strong password and phone validation checks
+        if (!formData.phone.trim()) {
+          throw new Error('Please enter a phone number');
+        }
+        if (formData.password.length < 6) {
+          throw new Error('Password must be at least 6 characters long');
+        }
+        if (!/[A-Z]/.test(formData.password)) {
+          throw new Error('Password must contain at least one capital letter');
+        }
+        if (!/[^A-Za-z0-9]/.test(formData.password)) {
+          throw new Error('Password must contain at least one symbol (special character)');
+        }
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error('Passwords do not match');
+        }
+
+        await register(formData.name, formData.email, formData.password, formData.phone);
         navigate('/');
       }
     } catch (err) {
@@ -48,7 +67,9 @@ export default function Auth() {
     setFormData({
       name: isLoginTab ? '' : 'John Doe',
       email,
-      password
+      password,
+      confirmPassword: isLoginTab ? '' : password,
+      phone: isLoginTab ? '' : '0771234567'
     });
   };
 
@@ -84,7 +105,7 @@ export default function Auth() {
           }} />
 
           {/* Form tab header toggles */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', backgroundColor: '#0d0d0f', padding: '0.25rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', backgroundColor: 'var(--bg-primary)', padding: '0.25rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
             <button
               onClick={() => { setIsLoginTab(true); setError(null); }}
               style={{
@@ -131,7 +152,7 @@ export default function Auth() {
             {isLoginTab ? 'Access Your Account' : 'Register New Member'}
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '1.5rem' }}>
-            {isLoginTab ? 'Fuel your athletic progress with premium supplements.' : 'Join Right Tech elite sports club nutrition store.'}
+            {isLoginTab ? 'Sign in to access your Right Tech orders and service status.' : 'Create an account to track your orders, service tickets, and projects.'}
           </p>
 
           {/* Error alert banner */}
@@ -171,6 +192,25 @@ export default function Auth() {
               </div>
             )}
 
+            {!isLoginTab && (
+              <div className="form-group">
+                <label>Phone Number</label>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    placeholder="0771234567"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    style={{ width: '100%', paddingLeft: '2.5rem' }}
+                  />
+                  <Phone size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.85rem' }} />
+                </div>
+              </div>
+            )}
+
             <div className="form-group">
               <label>Email Address</label>
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -203,7 +243,39 @@ export default function Auth() {
                 />
                 <Lock size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.85rem' }} />
               </div>
+              {!isLoginTab && (
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.35rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  <span style={{ color: formData.password.length >= 6 ? 'var(--success)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    • At least 6 characters
+                  </span>
+                  <span style={{ color: /[A-Z]/.test(formData.password) ? 'var(--success)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    • At least one capital letter
+                  </span>
+                  <span style={{ color: /[^A-Za-z0-9]/.test(formData.password) ? 'var(--success)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    • At least one symbol (special character)
+                  </span>
+                </div>
+              )}
             </div>
+
+            {!isLoginTab && (
+              <div className="form-group">
+                <label>Confirm Password</label>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    required
+                    placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    style={{ width: '100%', paddingLeft: '2.5rem' }}
+                  />
+                  <Lock size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.85rem' }} />
+                </div>
+              </div>
+            )}
 
             <button
               type="submit"
@@ -219,7 +291,7 @@ export default function Auth() {
 
         {/* Demo Credentials Helper Box */}
         <div style={{
-          backgroundColor: '#111115',
+          backgroundColor: 'var(--bg-primary)',
           border: '1px dashed var(--border-color)',
           borderRadius: '12px',
           padding: '1.25rem',

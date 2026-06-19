@@ -274,7 +274,7 @@ main {
 
 .btn-primary {
   background-color: var(--accent);
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .btn-primary:hover {
@@ -361,7 +361,7 @@ main {
 }
 
 .form-input {
-  background-color: #1a1a1e;
+  background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 0.75rem 1rem;
@@ -376,7 +376,7 @@ main {
 }
 
 .form-select {
-  background-color: #1a1a1e;
+  background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 0.75rem 1rem;
@@ -466,12 +466,10 @@ main {
 }
 
 .koko-logo {
-  color: var(--koko-teal);
-  font-family: var(--font-numbers);
-  font-weight: 900;
-  font-size: 1.2rem;
-  letter-spacing: -0.05em;
-  text-shadow: 0 0 5px rgba(0, 210, 196, 0.25);
+  height: 20px;
+  width: auto;
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .koko-text {
@@ -550,3 +548,186 @@ main {
 .animate-fade-in {
   animation: fadeIn var(--transition-normal) forwards;
 }
+
+/* Flyer Slider Responsive Design (Half height banner showcase) */
+.flyer-slider {
+  height: 300px;
+}
+
+@media (max-width: 1024px) {
+  .flyer-slider {
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .flyer-slider {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .flyer-slider {
+    height: 120px;
+  }
+}
+
+.flyer-slider-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.6s ease-in-out;
+  display: block;
+}
+
+.flyer-slider-slide.active {
+  position: relative;
+  opacity: 1;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.flyer-slider-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Page loader overlay & spinner keyframes */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes loaderFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.page-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+  animation: loaderFadeIn 0.25s ease-out forwards;
+}
+
+.page-loader-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(0, 125, 250, 0.15);
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  box-shadow: var(--shadow-accent);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 125, 250, 0.15);
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.page-loader-text {
+  margin-top: 1.25rem;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 125, 250, 0.3);
+}
+
+.page-loader-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--koko-teal) 100%);
+  box-shadow: 0 0 10px var(--accent), 0 0 5px var(--koko-teal);
+  z-index: 9999;
+  transition: width 0.15s ease-out, opacity 0.15s ease-in-out;
+}
+
+/* Light Theme Variables */
+[data-theme="light"] {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --border-color: #e4e4e7;
+  --border-focus: #cbd5e1;
+  
+  /* Drop shadow overrides for light mode cards */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Light mode overrides for form inputs */
+[data-theme="light"] .form-input,
+[data-theme="light"] .form-select,
+[data-theme="light"] .mobile-menu-drawer,
+[data-theme="light"] select,
+[data-theme="light"] input,
+[data-theme="light"] textarea {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="light"] ::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.8;
+}
+
+[data-theme="light"] .btn-secondary {
+  background-color: #f4f4f5;
+  border: 1px solid #e4e4e7;
+  color: #18181b;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background-color: #e4e4e7;
+}
+
+/* Light mode overlay styling */
+[data-theme="light"] .page-loader-overlay {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="light"] .page-loader-text {
+  text-shadow: none;
+}
+
+@keyframes popScale {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.animate-pop {
+  animation: popScale 0.3s ease-out;
+}
+
+

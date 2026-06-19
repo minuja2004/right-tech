@@ -107,7 +107,7 @@ export default function Checkout() {
         <ShoppingBag size={48} color="var(--text-muted)" style={{ marginBottom: '1rem' }} />
         <h2>Your Cart is Empty</h2>
         <p style={{ color: 'var(--text-secondary)', margin: '0.5rem 0 1.5rem 0' }}>
-          Add supplements to your shopping cart before attempting checkout.
+          Add products to your shopping cart before attempting checkout.
         </p>
         <Link to="/" className="btn btn-primary">Back to Shop</Link>
       </div>
@@ -265,12 +265,40 @@ export default function Checkout() {
 
                     {/* Branded elements for gateways */}
                     {method === 'Koko BNPL' && (
-                      <span className="koko-logo" style={{ fontSize: '1.1rem' }}>koko.</span>
+                      <img src="/koko-logo.png" alt="Koko" className="koko-logo" style={{ height: '18px' }} />
                     )}
                     {method === 'Card Payment' && (
-                      <div style={{ display: 'flex', gap: '0.25rem' }}>
-                        <span style={{ fontSize: '0.65rem', backgroundColor: '#fff', color: '#000', padding: '0.1rem 0.3rem', borderRadius: '2px', fontWeight: 800 }}>VISA</span>
-                        <span style={{ fontSize: '0.65rem', backgroundColor: '#EB001B', color: '#fff', padding: '0.1rem 0.3rem', borderRadius: '2px', fontWeight: 800 }}>MC</span>
+                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                        {/* Visa Card Badge */}
+                        <div style={{ 
+                          height: '20px', 
+                          width: '32px', 
+                          backgroundColor: '#ffffff', 
+                          borderRadius: '3px', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          padding: '1.5px',
+                          overflow: 'hidden',
+                          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
+                        }}>
+                          <img src="/visa-logo.png" alt="Visa" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block' }} />
+                        </div>
+                        {/* MasterCard Card Badge */}
+                        <div style={{ 
+                          height: '20px', 
+                          width: '32px', 
+                          backgroundColor: '#ffffff', 
+                          borderRadius: '3px', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          padding: '1.5px',
+                          overflow: 'hidden',
+                          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
+                        }}>
+                          <img src="/mastercard-logo.jpg" alt="MasterCard" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block' }} />
+                        </div>
                       </div>
                     )}
                   </label>
@@ -349,17 +377,17 @@ export default function Checkout() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginTop: '0.25rem', textAlign: 'center' }}>
                   <div style={{ padding: '0.5rem', backgroundColor: '#141416', borderRadius: '4px' }}>
                     <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>1st Payment</p>
-                    <p style={{ fontSize: '0.8rem', fontWeight: 700 }} className="font-numbers">රු {Math.round(kokoInstallment).toLocaleString()}</p>
+                    <p style={{ fontSize: '0.8rem', fontWeight: 700 }} className="font-numbers">LKR {Math.round(kokoInstallment).toLocaleString()}</p>
                     <p style={{ fontSize: '0.6rem', color: 'var(--koko-teal)', fontWeight: 600 }}>TODAY</p>
                   </div>
                   <div style={{ padding: '0.5rem', backgroundColor: '#141416', borderRadius: '4px' }}>
                     <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>2nd Payment</p>
-                    <p style={{ fontSize: '0.8rem', fontWeight: 700 }} className="font-numbers">රු {Math.round(kokoInstallment).toLocaleString()}</p>
+                    <p style={{ fontSize: '0.8rem', fontWeight: 700 }} className="font-numbers">LKR {Math.round(kokoInstallment).toLocaleString()}</p>
                     <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>In 30 Days</p>
                   </div>
                   <div style={{ padding: '0.5rem', backgroundColor: '#141416', borderRadius: '4px' }}>
                     <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>3rd Payment</p>
-                    <p style={{ fontSize: '0.8rem', fontWeight: 700 }} className="font-numbers">රු {Math.round(kokoInstallment).toLocaleString()}</p>
+                    <p style={{ fontSize: '0.8rem', fontWeight: 700 }} className="font-numbers">LKR {Math.round(kokoInstallment).toLocaleString()}</p>
                     <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>In 60 Days</p>
                   </div>
                 </div>
@@ -373,7 +401,7 @@ export default function Checkout() {
             className="btn btn-primary"
             style={{ width: '100%', padding: '1rem', fontSize: '1rem', textTransform: 'uppercase' }}
           >
-            {loading ? 'Processing Order...' : `Complete Order • ರು ${cartSubtotal.toLocaleString()}`}
+            {loading ? 'Processing Order...' : `Complete Order • LKR ${cartSubtotal.toLocaleString()}`}
           </button>
 
         </form>
@@ -405,7 +433,7 @@ export default function Checkout() {
                     </p>
                   </div>
                   <span className="font-numbers" style={{ fontSize: '0.85rem', fontWeight: 700 }}>
-                    රු {(item.price * item.quantity).toLocaleString()}
+                    LKR {(item.price * item.quantity).toLocaleString()}
                   </span>
                 </div>
               ))}
@@ -415,7 +443,7 @@ export default function Checkout() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem', fontSize: '0.85rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Subtotal</span>
-                <span className="font-numbers">රු {cartSubtotal.toLocaleString()}</span>
+                <span className="font-numbers">LKR {cartSubtotal.toLocaleString()}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Delivery Fee</span>
@@ -425,7 +453,7 @@ export default function Checkout() {
               <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', marginTop: '0.25rem' }}>
                 <span style={{ fontSize: '1rem', fontWeight: 700 }}>Grand Total</span>
                 <span className="font-numbers" style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--accent)' }}>
-                  රු {cartSubtotal.toLocaleString()}
+                  LKR {cartSubtotal.toLocaleString()}
                 </span>
               </div>
             </div>

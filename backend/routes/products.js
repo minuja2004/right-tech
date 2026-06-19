@@ -16,7 +16,7 @@ cloudinary.config({
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  limits: { fileSize: 25 * 1024 * 1024 } // 25MB limit
 });
 
 // @desc    Get all products (with optional search/category filter)
@@ -24,12 +24,17 @@ const upload = multer({
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const { category, search } = req.query;
+    const { category, subcategory, search } = req.query;
     let query = {};
 
     // Apply category filter
     if (category && category !== 'All') {
       query.category = category;
+    }
+
+    // Apply subcategory filter
+    if (subcategory && subcategory !== 'All') {
+      query.subcategory = subcategory;
     }
 
     // Apply search filter (real-time instant search matching names and descriptions)

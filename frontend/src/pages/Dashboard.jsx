@@ -222,8 +222,8 @@ export default function Dashboard() {
             }}>
               <Package size={40} strokeWidth={1} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
               <h3>No Orders Found</h3>
-              <p style={{ fontSize: '0.85rem', margin: '0.25rem 0 1rem 0' }}>You haven't placed any sports supplement orders yet.</p>
-              <Link to="/" className="btn btn-primary btn-sm">Start Fueling</Link>
+              <p style={{ fontSize: '0.85rem', margin: '0.25rem 0 1rem 0' }}>You haven't placed any orders yet.</p>
+              <Link to="/" className="btn btn-primary btn-sm">Browse Products</Link>
             </div>
           ) : (
             /* Order History List */
@@ -268,7 +268,7 @@ export default function Dashboard() {
                         <div>
                           <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total Paid</p>
                           <p style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--accent)' }} className="font-numbers">
-                            රු {order.totalAmount.toLocaleString()}
+                            LKR {order.totalAmount.toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -339,7 +339,7 @@ export default function Dashboard() {
                                 <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
                                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Qty: {item.quantity}</span>
                                   <span className="font-numbers" style={{ fontSize: '0.85rem', fontWeight: 700 }}>
-                                    රු {item.price.toLocaleString()}
+                                    LKR {item.price.toLocaleString()}
                                   </span>
                                 </div>
                               </div>

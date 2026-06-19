@@ -8,8 +8,11 @@ const ProductSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: [true, 'Please add a category'],
-    enum: ['Laptops', 'Printers', 'CCTV & Security', 'Gadgets', 'IT Services', 'Flyers']
+    required: [true, 'Please add a category']
+  },
+  subcategory: {
+    type: String,
+    default: ''
   },
   price: {
     type: Number,
@@ -31,6 +34,14 @@ const ProductSchema = new mongoose.Schema({
   allowKoko: {
     type: Boolean,
     default: true
+  },
+  isPremium: {
+    type: Boolean,
+    default: false
+  },
+  isHotOffer: {
+    type: Boolean,
+    default: false
   },
   selections: [
     {

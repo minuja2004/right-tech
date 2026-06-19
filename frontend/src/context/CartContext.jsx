@@ -5,6 +5,19 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message) => {
+    setToast(message);
+  };
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   // Load cart from local storage
   useEffect(() => {
@@ -24,7 +37,7 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(items));
   };
 
-  const addToCart = (product, quantity = 1, selectedOptions = {}) => {
+  const addToCart = (product, quantity = 1, selectedOptions = {}, openDrawer = false) => {
     // Generate a unique ID based on product ID and selected options string
     const optionsString = Object.entries(selectedOptions)
       .sort((a, b) => a[0].localeCompare(b[0]))
@@ -74,7 +87,11 @@ export const CartProvider = ({ children }) => {
     }
 
     saveCart(newCartItems);
-    setIsCartOpen(true); // Open drawer on add
+    if (openDrawer) {
+      setIsCartOpen(true);
+    } else {
+      showToast(`${product.name} added to cart!`);
+    }
   };
 
   const removeFromCart = (cartItemId) => {
@@ -118,7 +135,9 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         clearCart,
         cartSubtotal,
-        cartTotalCount
+        cartTotalCount,
+        toast,
+        setToast
       }}
     >
       {children}

@@ -9,23 +9,32 @@ export default function Admin() {
 
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' or 'products'
+  const [categories, setCategories] = useState([]);
+  const [activeTab, setActiveTab] = useState('orders'); // 'orders', 'products', 'categories'
 
   // Loading / error states
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState(null);
+
+  // Categories form states
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newSubcategoryInputs, setNewSubcategoryInputs] = useState({}); // {[catId]: 'text'}
 
   // Form states (Product creation/editing)
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [productForm, setProductForm] = useState({
     name: '',
-    category: 'Laptops',
+    category: '',
+    subcategory: '',
     price: '',
     description: '',
     stock: '',
     allowKoko: true,
+    isPremium: false,
+    isHotOffer: false,
     images: []
   });
 
@@ -36,6 +45,23 @@ export default function Admin() {
   // Upload state
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+
+  const fetchCategories = async () => {
+    try {
+      setLoadingCategories(true);
+      const res = await fetch(`${API_URL}/categories`);
+      const data = await res.json();
+      if (data.success) {
+        setCategories(data.data);
+        return data.data;
+      }
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    } finally {
+      setLoadingCategories(false);
+    }
+    return [];
+  };
 
   const fetchData = async () => {
     if (!isAdmin) return;
@@ -58,6 +84,17 @@ export default function Admin() {
       if (productsData.success) {
         setProducts(productsData.data);
       }
+
+      // Fetch Categories
+      const loadedCats = await fetchCategories();
+      // Set defaults for form if empty
+      if (loadedCats.length > 0 && !productForm.category) {
+        setProductForm(prev => ({
+          ...prev,
+          category: loadedCats[0].name,
+          subcategory: loadedCats[0].subcategories[0] || ''
+        }));
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -69,6 +106,90 @@ export default function Admin() {
   useEffect(() => {
     fetchData();
   }, [isAdmin]);
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    try {
+      const res = await fetch(`${API_URL}/categories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: newCategoryName.trim() })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewCategoryName('');
+        await fetchCategories();
+      } else {
+        alert(data.message || 'Failed to add category');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeleteCategory = async (catId) => {
+    if (!window.confirm('Are you sure you want to delete this category? All its subcategories will be removed.')) return;
+    try {
+      const res = await fetch(`${API_URL}/categories/${catId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchCategories();
+      } else {
+        alert(data.message || 'Failed to delete category');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleAddSubcategory = async (catId) => {
+    const subName = newSubcategoryInputs[catId] || '';
+    if (!subName.trim()) return;
+    try {
+      const res = await fetch(`${API_URL}/categories/${catId}/subcategories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: subName.trim() })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewSubcategoryInputs(prev => ({ ...prev, [catId]: '' }));
+        await fetchCategories();
+      } else {
+        alert(data.message || 'Failed to add subcategory');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeleteSubcategory = async (catId, subName) => {
+    if (!window.confirm(`Are you sure you want to delete subcategory "${subName}"?`)) return;
+    try {
+      const res = await fetch(`${API_URL}/categories/${catId}/subcategories/${encodeURIComponent(subName)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchCategories();
+      } else {
+        alert(data.message || 'Failed to delete subcategory');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   // Update order status
   const handleUpdateOrderStatus = async (orderId, updates) => {
@@ -210,6 +331,8 @@ export default function Admin() {
         description: '',
         stock: '',
         allowKoko: true,
+        isPremium: false,
+        isHotOffer: false,
         images: []
       });
       setSelectionsList([]);
@@ -218,7 +341,7 @@ export default function Admin() {
 
       // Refetch
       fetchData();
-      alert(isEditing ? 'Supplement updated successfully!' : 'Supplement created successfully!');
+      alert(isEditing ? 'Product updated successfully!' : 'Product created successfully!');
     } catch (err) {
       setError(err.message);
     }
@@ -231,10 +354,13 @@ export default function Admin() {
     setProductForm({
       name: prod.name,
       category: prod.category,
+      subcategory: prod.subcategory || '',
       price: prod.price,
       description: prod.description,
       stock: prod.stock,
       allowKoko: prod.allowKoko,
+      isPremium: prod.isPremium || false,
+      isHotOffer: prod.isHotOffer || false,
       images: prod.images || []
     });
     setSelectionsList(prod.selections || []);
@@ -243,7 +369,7 @@ export default function Admin() {
 
   // Delete product
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this supplement profile?')) return;
+    if (!window.confirm('Are you sure you want to delete this product profile?')) return;
     try {
       const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'DELETE',
@@ -281,7 +407,7 @@ export default function Admin() {
         </h1>
         
         {/* Tab switcher */}
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button 
             onClick={() => setActiveTab('orders')}
             className={`btn ${activeTab === 'orders' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
@@ -292,12 +418,29 @@ export default function Admin() {
             onClick={() => setActiveTab('products')}
             className={`btn ${activeTab === 'products' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
           >
-            Manage Supplements ({products.length})
+            Manage Products ({products.length})
+          </button>
+          <button 
+            onClick={() => setActiveTab('categories')}
+            className={`btn ${activeTab === 'categories' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+          >
+            Manage Categories ({categories.length})
           </button>
           <button 
             onClick={() => {
               setIsEditing(false);
-              setProductForm({ name: '', category: 'Protein', price: '', description: '', stock: '', allowKoko: true, images: [] });
+              setProductForm({ 
+                name: '', 
+                category: categories[0]?.name || '', 
+                subcategory: categories[0]?.subcategories[0] || '', 
+                price: '', 
+                description: '', 
+                stock: '', 
+                allowKoko: true, 
+                isPremium: false,
+                isHotOffer: false,
+                images: [] 
+              });
               setSelectionsList([]);
               setActiveTab('products-form');
             }}
@@ -305,7 +448,7 @@ export default function Admin() {
             style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}
           >
             <Plus size={14} />
-            <span>Add Supplement</span>
+            <span>Add Product</span>
           </button>
         </div>
       </div>
@@ -359,7 +502,7 @@ export default function Admin() {
                           ))}
                         </ul>
                       </td>
-                      <td style={{ padding: '1rem', fontWeight: 700 }} className="font-numbers">රු {order.totalAmount.toLocaleString()}</td>
+                      <td style={{ padding: '1rem', fontWeight: 700 }} className="font-numbers">LKR {order.totalAmount.toLocaleString()}</td>
                       
                       {/* Payment Status Switcher */}
                       <td style={{ padding: '1rem' }}>
@@ -413,7 +556,7 @@ export default function Admin() {
                     <div>
                       <h4 style={{ fontSize: '0.95rem', fontWeight: 600, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{prod.name}</h4>
                       <p style={{ fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600, textTransform: 'uppercase' }}>{prod.category}</p>
-                      <p style={{ fontSize: '0.9rem', fontWeight: 700 }} className="font-numbers">රු {prod.price.toLocaleString()}</p>
+                      <p style={{ fontSize: '0.9rem', fontWeight: 700 }} className="font-numbers">LKR {prod.price.toLocaleString()}</p>
                       <p style={{ fontSize: '0.75rem', color: prod.stock > 0 ? 'var(--success)' : 'var(--danger)' }}>
                         Stock: {prod.stock}
                       </p>
@@ -441,41 +584,63 @@ export default function Admin() {
       {activeTab === 'products-form' && (
         <div style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
           <h2 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
-            {isEditing ? `Edit Product Profile: ${productForm.name}` : 'Create Supplement Product'}
+            {isEditing ? `Edit Product Profile: ${productForm.name}` : 'Create Product Profile'}
           </h2>
 
           <form onSubmit={handleProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             
             <div className="form-group">
-              <label>Supplement Name</label>
+              <label>Product Name</label>
               <input
                 type="text"
                 required
-                placeholder="e.g. ULTRA PURE CREATINE"
+                placeholder="e.g. Dell Inspiron 15"
                 value={productForm.name}
                 onChange={(e) => setProductForm((p) => ({ ...p, name: e.target.value }))}
                 className="form-input"
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }} className="form-row-three">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }} className="form-row-two">
               <div className="form-group">
-                <label>Category</label>
+                <label>Main Category</label>
                 <select
                   value={productForm.category}
-                  onChange={(e) => setProductForm((p) => ({ ...p, category: e.target.value }))}
+                  onChange={(e) => {
+                    const selectedCat = e.target.value;
+                    const catObj = categories.find(c => c.name === selectedCat);
+                    setProductForm((p) => ({
+                      ...p,
+                      category: selectedCat,
+                      subcategory: catObj?.subcategories[0] || ''
+                    }));
+                  }}
                   className="form-select"
+                  required
                 >
-                  <option value="Laptops">Laptops</option>
-                  <option value="Printers">Printers</option>
-                  <option value="CCTV & Security">CCTV & Security</option>
-                  <option value="Gadgets">Gadgets</option>
-                  <option value="IT Services">IT Services</option>
-                  <option value="Flyers">Flyers</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat.name}>{cat.name}</option>
+                  ))}
                 </select>
               </div>
               <div className="form-group">
-                <label>Base Price (රු)</label>
+                <label>Subcategory</label>
+                <select
+                  value={productForm.subcategory}
+                  onChange={(e) => setProductForm((p) => ({ ...p, subcategory: e.target.value }))}
+                  className="form-select"
+                >
+                  <option value="">-- None (Or select subcategory) --</option>
+                  {categories.find(c => c.name === productForm.category)?.subcategories.map((sub, idx) => (
+                    <option key={idx} value={sub}>{sub}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }} className="form-row-two">
+              <div className="form-group">
+                <label>Base Price (LKR)</label>
                 <input
                   type="number"
                   required
@@ -523,6 +688,33 @@ export default function Admin() {
               <label htmlFor="allowKoko" style={{ fontSize: '0.85rem', cursor: 'pointer' }}>
                 Eligible for Koko 3-split payments BNPL
               </label>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  id="adminIsPremium"
+                  checked={productForm.isPremium}
+                  onChange={(e) => setProductForm((p) => ({ ...p, isPremium: e.target.checked }))}
+                  style={{ accentColor: 'var(--accent)', width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <label htmlFor="adminIsPremium" style={{ fontSize: '0.85rem', cursor: 'pointer' }}>
+                  Premium Product (Showcase)
+                </label>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  id="adminIsHotOffer"
+                  checked={productForm.isHotOffer}
+                  onChange={(e) => setProductForm((p) => ({ ...p, isHotOffer: e.target.checked }))}
+                  style={{ accentColor: 'var(--accent)', width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <label htmlFor="adminIsHotOffer" style={{ fontSize: '0.85rem', cursor: 'pointer' }}>
+                  Hot Deals / Offers
+                </label>
+              </div>
             </div>
 
             {/* Cloudinary Upload Section */}
@@ -620,7 +812,7 @@ export default function Admin() {
                   />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label>Price Modifier (රු)</label>
+                  <label>Price Modifier (LKR)</label>
                   <input
                     type="number"
                     placeholder="e.g. 8000"
@@ -645,12 +837,23 @@ export default function Admin() {
             {/* Actions */}
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <button type="submit" className="btn btn-primary" style={{ flexGrow: 1 }}>
-                {isEditing ? 'Update Supplement Details' : 'Publish Supplement Profile'}
+                {isEditing ? 'Update Product Details' : 'Publish Product Profile'}
               </button>
               <button 
                 type="button" 
                 onClick={() => {
-                  setProductForm({ name: '', category: 'Laptops', price: '', description: '', stock: '', allowKoko: true, images: [] });
+                  setProductForm({ 
+                    name: '', 
+                    category: categories[0]?.name || '', 
+                    subcategory: categories[0]?.subcategories[0] || '', 
+                    price: '', 
+                    description: '', 
+                    stock: '', 
+                    allowKoko: true, 
+                    isPremium: false,
+                    isHotOffer: false,
+                    images: [] 
+                  });
                   setSelectionsList([]);
                   setIsEditing(false);
                   setEditingId(null);
@@ -663,6 +866,128 @@ export default function Admin() {
             </div>
 
           </form>
+        </div>
+      )}
+
+      {/* CATEGORIES MANAGEMENT TAB PANEL */}
+      {activeTab === 'categories' && (
+        <div style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '2rem' }} className="animate-fade-in">
+          <h2 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', textTransform: 'uppercase', marginBottom: '1.5rem', color: '#ffffff' }}>
+            Manage Categories & Subcategories
+          </h2>
+
+          {/* Add Main Category Form */}
+          <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '2.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '2rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flexGrow: 1, maxWidth: '400px', minWidth: '250px' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>New Main Category Name</label>
+              <input 
+                type="text" 
+                required
+                placeholder="e.g. Network Cabinets"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.65rem 1rem', outline: 'none', fontSize: '0.85rem' }}
+              />
+            </div>
+            <button type="submit" className="btn btn-primary" style={{ padding: '0.65rem 1.5rem', height: '38px', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <Plus size={16} />
+              <span>Add Category</span>
+            </button>
+          </form>
+
+          {/* Categories Grid List */}
+          {loadingCategories ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+              <div className="loading-spinner"></div>
+            </div>
+          ) : categories.length === 0 ? (
+            <p style={{ color: 'var(--text-secondary)' }}>No categories configured. Seed database or add one above.</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+              {categories.map((cat) => (
+                <div key={cat._id} style={{ backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '220px' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+                      <h3 style={{ fontSize: '1rem', color: '#ffffff', fontWeight: 700 }}>{cat.name}</h3>
+                      {cat.name !== 'Flyers' && (
+                        <button 
+                          onClick={() => handleDeleteCategory(cat._id)}
+                          className="btn btn-sm"
+                          style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }}
+                          title="Delete Main Category"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Subcategories list */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                      <h4 style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subcategories</h4>
+                      {cat.subcategories.length === 0 ? (
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>No subcategories yet.</p>
+                      ) : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                          {cat.subcategories.map((sub, idx) => (
+                            <span 
+                              key={idx} 
+                              style={{ 
+                                backgroundColor: 'var(--bg-secondary)', 
+                                border: '1px solid var(--border-color)', 
+                                borderRadius: '4px', 
+                                padding: '0.2rem 0.5rem', 
+                                fontSize: '0.75rem', 
+                                color: 'var(--text-secondary)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem'
+                              }}
+                            >
+                              <span>{sub}</span>
+                              {cat.name !== 'Flyers' && (
+                                <button 
+                                  onClick={() => handleDeleteSubcategory(cat._id, sub)}
+                                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'inline-flex', padding: 0 }}
+                                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--danger)'}
+                                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                >
+                                  <X size={12} />
+                                </button>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Add Subcategory form for this main category */}
+                  {cat.name !== 'Flyers' && (
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', borderTop: '1px dashed var(--border-color)', paddingTop: '1rem' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Add subcategory..."
+                        value={newSubcategoryInputs[cat._id] || ''}
+                        onChange={(e) => setNewSubcategoryInputs(prev => ({ ...prev, [cat._id]: e.target.value }))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleAddSubcategory(cat._id);
+                        }}
+                        style={{ backgroundColor: '#141416', border: '1px solid var(--border-color)', borderRadius: '6px', color: '#ffffff', padding: '0.45rem 0.75rem', outline: 'none', fontSize: '0.8rem', flexGrow: 1 }}
+                      />
+                      <button 
+                        onClick={() => handleAddSubcategory(cat._id)}
+                        className="btn btn-secondary btn-sm"
+                        style={{ padding: '0.45rem 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  )}
+
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

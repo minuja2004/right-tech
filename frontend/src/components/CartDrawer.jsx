@@ -96,7 +96,7 @@ export default function CartDrawer() {
               <ShoppingBag size={48} strokeWidth={1} color="var(--text-muted)" />
               <div>
                 <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Your cart is empty</p>
-                <p style={{ fontSize: '0.8rem' }}>Add some premium supplements to fuel your training!</p>
+                <p style={{ fontSize: '0.8rem' }}>Add some premium IT products or service packages to your cart!</p>
               </div>
               <button 
                 onClick={() => setIsCartOpen(false)} 
@@ -198,7 +198,7 @@ export default function CartDrawer() {
                     {/* Price and Delete Button */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span className="font-numbers" style={{ fontSize: '0.9rem', fontWeight: 700 }}>
-                        රු {(item.price * item.quantity).toLocaleString()}
+                        LKR {(item.price * item.quantity).toLocaleString()}
                       </span>
                       <button 
                         onClick={() => removeFromCart(item.cartItemId)}
@@ -235,15 +235,15 @@ export default function CartDrawer() {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
               <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Subtotal</span>
               <span className="font-numbers" style={{ fontSize: '1.25rem', fontWeight: 800 }}>
-                රු {cartSubtotal.toLocaleString()}
+                LKR {cartSubtotal.toLocaleString()}
               </span>
             </div>
 
             {/* Koko Installment Banner */}
             <div className="koko-bnpl-widget" style={{ padding: '0.65rem 0.85rem', margin: '0 0 1.25rem 0' }}>
-              <span className="koko-logo" style={{ fontSize: '0.95rem' }}>koko.</span>
+              <img src="/koko-logo.png" alt="Koko" className="koko-logo" style={{ height: '15px' }} />
               <div className="koko-text" style={{ fontSize: '0.75rem' }}>
-                or 3 X <span className="font-numbers">රු {Math.round(kokoInstallment).toLocaleString()}</span> interest-free
+                or 3 X <span className="font-numbers">LKR {Math.round(kokoInstallment).toLocaleString()}</span> interest-free
               </div>
             </div>
 

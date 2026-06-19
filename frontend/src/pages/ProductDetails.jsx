@@ -79,7 +79,7 @@ export default function ProductDetails() {
 
   const handleAddToCart = () => {
     if (!product) return;
-    addToCart(product, quantity, selectedOptions);
+    addToCart(product, quantity, selectedOptions, true);
   };
 
   const handlePrevImage = () => {
@@ -113,7 +113,7 @@ export default function ProductDetails() {
         <AlertCircle size={48} color="var(--danger)" style={{ marginBottom: '1rem' }} />
         <h2>Product Not Found</h2>
         <p style={{ color: 'var(--text-secondary)', margin: '0.5rem 0 1.5rem 0' }}>
-          The supplement profile you are looking for does not exist or was removed.
+          The product profile you are looking for does not exist or was removed.
         </p>
         <Link to="/" className="btn btn-primary">Back to Catalog</Link>
       </div>
@@ -279,15 +279,15 @@ export default function ProductDetails() {
           }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Price</span>
             <div className="font-numbers" style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', lineHeight: '1.1' }}>
-              රු {calculatedPrice.toLocaleString()}
+              LKR {calculatedPrice.toLocaleString()}
             </div>
             
             {/* Koko BNPL installment preview */}
             {product.allowKoko && (
               <div className="koko-bnpl-widget" style={{ maxWidth: '400px', margin: '0.75rem 0 0 0' }}>
-                <span className="koko-logo">koko.</span>
+                <img src="/koko-logo.png" alt="Koko" className="koko-logo" style={{ height: '17px' }} />
                 <div className="koko-text">
-                  or 3 X <span className="font-numbers">රු {Math.round(kokoInstallment).toLocaleString()}</span> interest-free
+                  or 3 X <span className="font-numbers">LKR {Math.round(kokoInstallment).toLocaleString()}</span> interest-free
                 </div>
               </div>
             )}
@@ -315,7 +315,7 @@ export default function ProductDetails() {
                     {sel.values?.map((val) => {
                       const isSelected = selectedOptions[sel.name] === val.value;
                       const modifierText = val.priceModifier > 0 
-                        ? ` (+රු ${val.priceModifier.toLocaleString()})`
+                        ? ` (+LKR ${val.priceModifier.toLocaleString()})`
                         : '';
                       return (
                         <button
